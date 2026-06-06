@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC-Turbo | Carritos de Control Remoto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: white; }
+        .gradient-text { background: linear-gradient(90deg, #3b82f6, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 text-center">
+    <div class="glass p-12 rounded-3xl max-w-2xl shadow-2xl border-blue-500/30">
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+            RC-TURBO <br><span class="gradient-text">Cargando Velocidad...</span>
+        </h1>
+        <p class="text-gray-400 mb-8 text-lg">
+            Estamos optimizando los motores y ajustando la pista. <br>
+            La experiencia completa de e-commerce dinámico se está desplegando.
+        </p>
+        <div class="flex justify-center gap-4">
+            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+        <div class="mt-10 text-sm text-gray-500">
+            v1.0.0 &bull; Powered by OpenClaw & NVIDIA AI 👑
+        </div>
+    </div>
+</body>
+</html>
