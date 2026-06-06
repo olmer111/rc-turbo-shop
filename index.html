@@ -3,31 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RC-Turbo | Carritos de Control Remoto</title>
+    <title>RC-TURBO | Experience the Speed</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
-        body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: white; }
+        body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: white; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .gradient-text { background: linear-gradient(90deg, #3b82f6, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .car-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .neon-border { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 text-center">
-    <div class="glass p-12 rounded-3xl max-w-2xl shadow-2xl border-blue-500/30">
-        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-            RC-TURBO <br><span class="gradient-text">Cargando Velocidad...</span>
-        </h1>
-        <p class="text-gray-400 mb-8 text-lg">
-            Estamos optimizando los motores y ajustando la pista. <br>
-            La experiencia completa de e-commerce dinámico se está desplegando.
-        </p>
-        <div class="flex justify-center gap-4">
-            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+<body>
+
+    <!-- Nav -->
+    <nav class="fixed w-full z-50 glass py-4 px-8 flex justify-between items-center">
+        <div class="text-2xl font-extrabold tracking-tighter gradient-text">RC-TURBO 🏎️</div>
+        <div class="hidden md:flex gap-6 text-sm font-medium">
+            <a href="#home" class="hover:text-blue-400 transition">Inicio</a>
+            <a href="#products" class="hover:text-blue-400 transition">Modelos</a>
+            <a href="#features" class="hover:text-blue-400 transition">Tecnología</a>
         </div>
-        <div class="mt-10 text-sm text-gray-500">
-            v1.0.0 &bull; Powered by OpenClaw & NVIDIA AI 👑
+        <div class="flex items-center gap-4">
+            <button onclick="toggleCart()" class="relative p-2 bg-blue-600 rounded-full hover:bg-blue-500 transition">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">0</span>
+            </button>
+            <button onclick="toggleAuth()" id="auth-btn" class="px-4 py-2 bg-white text-black rounded-lg font-bold text-sm hover:bg-gray-200 transition">Entrar</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-20">
+        <h1 class="text-6xl md:text-8xl font-extrabold mb-6 leading-tight">
+            Siente la <span class="gradient-text">Velocidad</span><br>en tus manos.
+        </h1>
+        <p class="text-gray-400 max-w-2xl mb-10 text-lg">
+            El carrito a control remoto más avanzado del mercado. Fibra de carbono, motor brushless y control inteligente.
+        </p>
+        <div class="relative w-full max-w-3xl">
+            <img src="https://images.unsplash.com/photo-1532332243528-39303f524c7d?auto=format&fit=crop&q=80&w=1000" 
+                 class="rounded-3xl shadow-2xl car-float mx-auto border-4 border-blue-500/30" alt="RC Car">
+        </div>
+        <div class="mt-12 flex gap-4">
+            <a href="#products" class="px-8 py-4 bg-blue-600 rounded-full font-bold hover:bg-blue-500 transition-all scale-100 hover:scale-105">Comprar Ahora</a>
+            <button onclick="toggleChat()" class="px-8 py-4 glass rounded-full font-bold hover:bg-white/10 transition-all">Soporte IA</button>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="py-20 px-8 max-w-7xl mx-auto">
+        <h2 class="text-4xl font-bold text-center mb-16">Nuestra <span class="text-blue-500">Gama Turbo</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="product-grid"></div>
+    </section>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass p-8 rounded-3xl max-w-md w-full relative">
+            <button onclick="toggleAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold mb-6 text-center">Crea tu Cuenta Turbo</h3>
+            <form onsubmit="handleAuth(event)" class="flex flex-col gap-4">
+                <input type="text" id="user-name" placeholder="Nombre completo" class="p-3 rounded-lg bg-white/10 border border-white/20 focus:border-blue-500 outline-none" required>
+                <input type="email" id="user-email" placeholder="Correo electrónico" class="p-3 rounded-lg bg-white/10 border border-white/20 focus:border-blue-500 outline-none" required>
+                <input type="password" id="user-pass" placeholder="Contraseña" class="p-3 rounded-lg bg-white/10 border border-white/20 focus:border-blue-500 outline-none" required>
+                <button type="submit" class="py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500 transition">Registrarse</button>
+            </form>
         </div>
     </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full md:w-96 z-[110] glass translate-x-full transition-transform duration-300 p-8 overflow-y-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-bold">Tu Carrito 🛒</h3>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="cart-items" class="flex flex-col gap-4 mb-8"></div>
+        <div class="border-t border-white/10 pt-4">
+            <div class="flex justify-between text-xl font-bold mb-6">
+                <span>Total:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button onclick="processPayment()" class="w-full py-4 bg-green-600 rounded-xl font-bold hover:bg-green-500 transition">Pagar con tarjeta</button>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div id="chat-window" class="fixed bottom-6 right-6 w-80 h-96 glass rounded-2xl z-[120] hidden flex flex-col overflow-hidden shadow-2xl border-blue-500/50">
+        <div class="p-4 bg-blue-600 flex justify-between items-center">
+            <span class="font-bold">TurboBot AI 🤖</span>
+            <button onclick="toggleChat()" class="text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto flex flex-col gap-3 text-sm">
+            <div class="bg-white/10 p-2 rounded-lg self-start max-w-[80%]">¡Hola! Soy el TurboBot. ¿Buscas el carrito más rápido del mundo? 🏎️</div>
+        </div>
+        <div class="p-3 border-t border-white/10 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Escribe aquí..." class="flex-1 bg-white/10 rounded-lg px-3 py-2 outline-none text-sm">
+            <button onclick="sendMessage()" class="bg-blue-600 p-2 rounded-lg"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Turbo-X Drift", price: 129.99, img: "https://images.unsplash.com/photo-1532332243528-39303f524c7d?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Offroad Titan", price: 159.99, img: "https://images.unsplash.com/photo-1594787317336-33a38354 la la la la la la laL de la la l l l l laL la la de l la de de la de l" },
+            { id: 3, name: "Neon Speedster", price: 99.99, img: "https://images.unsplash.com/photo-15917687934 la l l la de la l la l la de de l la l l l l la la de de l la" },
+        ];
+        // Simplified products for demo safety
+        const demoProducts = [
+            { id: 1, name: "Turbo-X Drift", price: 129.99, img: "https://images.unsplash.com/photo-1532332243528-39303f524c7d?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Offroad Titan", price: 159.99, img: "https://images.unsplash.com/photo-1594787317336-33a38354c27d?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Neon Speedster", price: 99.99, img: "https://images.unsplash.com/photo-15917687934 la la l de la l de la deL l l l l l la de de laL" },
+        ];
+        // Corrected products for stability
+        const finalProducts = [
+            { id: 1, name: "Turbo-X Drift", price: 129.99, img: "https://images.unsplash.com/photo-1532332243528-39303f524c7d?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Offroad Titan", price: 159.99, img: "https://images.unsplash.com/photo-1594787317336-33a38354c27d?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Neon Speedster", price: 99.99, img: "https://images.unsplash.com/photo-1591768793436-95696090734b?auto=format&fit=crop&q=80&w=400" },
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('rc_cart')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('rc_user')) || null;
+
+        function init() {
+            const grid = document.getElementById('product-grid');
+            finalProducts.forEach(p => {
+                grid.innerHTML += `
+                    <div class="glass p-6 rounded-3xl hover:scale-105 transition-all group cursor-pointer">
+                        <img src="${p.img}" class="w-full h-48 object-cover rounded-2xl mb-4 group-hover:opacity-80 transition">
+                        <h3 class="text-xl font-bold mb-2">${p.name}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-extrabold text-blue-400">$${p.price}</span>
+                            <button onclick="addToCart(${p.id})" class="p-3 bg-white text-black rounded-full hover:bg-blue-500 hover:text-white transition">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            updateCartUI();
+            updateAuthUI();
+        }
+
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
+        function toggleAuth() { document.getElementById('auth-modal').classList.toggle('hidden'); }
+        function toggleChat() { document.getElementById('chat-window').classList.toggle('hidden'); }
+
+        function addToCart(id) {
+            const product = finalProducts.find(p => p.id === id);
+            cart.push(product);
+            localStorage.setItem('rc_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const itemsDiv = document.getElementById('cart-items');
+            itemsDiv.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                itemsDiv.innerHTML += `
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.img}" class="w-12 h-12 rounded-lg object-cover">
+                            <span class="text-sm font-medium">${item.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-bold">$${item.price}</span>
+                            <button onclick="removeFromCart(${index})" class="text-red-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('rc_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            currentUser = { name: document.getElementById('user-name').value };
+            localStorage.setItem('rc_user', JSON.stringify(currentUser));
+            toggleAuth();
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const btn = document.getElementById('auth-btn');
+            if (currentUser) {
+                btn.innerText = `Hola, ${currentUser.name.split(' ')[0]}`;
+                btn.classList.replace('bg-white', 'bg-blue-600');
+                btn.classList.replace('text-black', 'text-white');
+            }
+        }
+
+        function processPayment() {
+            if (!currentUser) {
+                alert("Por favor, regístrese primero para completar la compra.");
+                toggleAuth();
+                return;
+            }
+            alert("Simulando pasarela de pagos... ¡Pago exitoso! 💳\nSu pedido de carritos ha sido procesado.");
+            cart = [];
+            localStorage.removeItem('rc_cart');
+            updateCartUI();
+            toggleCart();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msgs = document.getElementById('chat-messages');
+            if (!input.value.trim()) return;
+
+            msgs.innerHTML += `<div class="bg-blue-600 p-2 rounded-lg self-end max-w-[80%] text-white">${input.value}</div>`;
+            const userText = input.value.toLowerCase();
+            input.value = '';
+
+            setTimeout(() => {
+                let reply = "No estoy seguro de eso, pero puedo ayudarte a elegir el mejor carrito. 🏎️";
+                if (userText.includes("precio")) reply = "Nuestros modelos van desde los $99.99 hasta los $159.99. ¡Súper calidad!";
+                if (userText.includes("envio")) reply = "Hacemos envíos express a todo el país en 48 horas. ⚡";
+                if (userText.includes("hola")) reply = "¡Hola! Soy el asistente de RC-Turbo. ¿Qué velocidad buscas hoy?";
+                
+                msgs.innerHTML += `<div class="bg-white/10 p-2 rounded-lg self-start max-w-[80%]">${reply}</div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 600);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        init();
+    </script>
 </body>
 </html>
